@@ -1,5 +1,17 @@
 import math
 
+def Vec3(*args):
+  if len(args) == 3:
+    return Vector(args)
+  if len(args) == 1:
+    try:
+      len(args[0])
+    except TypeError:
+      return Vector(args * 3) 
+    if len(args[0]) == 3:
+      return Vector(args[0])
+  raise TypeError
+
 class Vector(object):
   def __init__(self, data):
     self.data = tuple(data)
@@ -34,6 +46,9 @@ class Vector(object):
     if isinstance(other, (int, float)):
       return Vector(x*other for x in self)
     return NotImplemented
+
+  def __rmul__(self, other):
+    return self * other
   
   def __add__(self, other):
     if isinstance(other, Vector):
@@ -96,3 +111,7 @@ class Vector(object):
       self * math.cos(theta) +
       axis * (self * axis) * (1 - math.cos(theta)) +
       (self ^ axis) * math.sin(theta))
+
+AXIS_X = Vector((1, 0, 0))
+AXIS_Y = Vector((0, 1, 0))
+AXIS_Z = Vector((0, 0, 1))
