@@ -1,6 +1,7 @@
 from slowhand.scene import Scene, RenderData
 from slowhand.camera import Camera
 from slowhand.math import Vec3, Vec4
+from slowhand.geom import Box
 import numpy as np
 import imageio
 
@@ -35,9 +36,10 @@ def main():
   height = width / c.aspect_ratio
   depth = 3
   #image = np.zeros((width, height, depth))
-  image = imageio.imread('/home/pkilgo/Desktop/pyfx-sphere.png')
+  image = imageio.imread('/home/pkilgo/Desktop/better-bunny.png')
   cb = Callback()
   scene.callback = cb.update
+  scene.box = Box.from_radius(1)
   print(image.shape)
   scene.render(image)
   imageio.imsave('sphere.png', image)

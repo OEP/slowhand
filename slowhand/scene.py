@@ -12,13 +12,14 @@ class RenderData(object):
 
 class Scene(object):
   def __init__(self, camera, data, scatter=5, step=0.1, samples=1,
-      callback=None):
+      callback=None, box=None):
     self.camera = camera
     self.data = data
     self.scatter = scatter
     self.step = step
     self.samples = samples
     self.callback = callback
+    self.box = box
 
   def render(self, image):
     width, height, depth = image.shape
@@ -28,6 +29,18 @@ class Scene(object):
         ray = self.camera.get_ray(i/width, j/height)
         t0 = self.camera.near
         t1 = self.camera.far
+        
+        if self.callback:
+          self.callback(j * width + i, width * height)
+
+        if self.box:
+          intersect = self.box.intersects(ray)
+          if intersect:
+            t0 = max(t0, intersect[0])
+            t1 = min(t1, intersect[1])
+          else:
+            continue
+
         current = t0
         T = 1
         light = Vec4(0)
@@ -40,5 +53,3 @@ class Scene(object):
           current += self.step
         
         image[i][j] = light[:image.ndim]
-        if self.callback:
-          self.callback(j * width + i, width * height)

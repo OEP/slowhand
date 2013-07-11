@@ -122,18 +122,35 @@ class Vector(object):
       (self ^ axis) * math.sin(theta))
 
 class Ray(object):
-  def __init__(self, base, direction):
-    self.base = base
+  def __init__(self, origin, direction):
+    self.origin = origin
     self.direction = direction.unit
 
   def __repr__(self):
     return "Ray<{}>".format(str(self))
 
   def __str__(self):
-    return "{{Base: {}, Direction: {}}}".format(self.base, self.direction)
+    return "{{Base: {}, Direction: {}}}".format(self.origin, self.direction)
 
   def trace(self, length):
-    return self.base + self.direction * length
+    return self.origin + self.direction * length
+  
+  @property
+  def inverse_direction(self):
+    try:
+      return self._inverse_direction
+    except AttributeError:
+      self._inverse_direction = Vector(1/x if x != 0 else 0
+        for x in self.direction)
+      return self._inverse_direction
+
+  @property
+  def sign(self):
+    try:
+      return self._sign
+    except AttributeError:
+      self._sign = Vector(int(x<0) for x in self.inverse_direction)
+      return self._sign
 
 AXIS_X = Vector((1, 0, 0))
 AXIS_Y = Vector((0, 1, 0))
