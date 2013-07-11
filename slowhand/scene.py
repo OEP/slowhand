@@ -11,12 +11,14 @@ class RenderData(object):
     self.sm = sm
 
 class Scene(object):
-  def __init__(self, camera, data, scatter=5, step=0.1, samples=1):
+  def __init__(self, camera, data, scatter=5, step=0.1, samples=1,
+      callback=None):
     self.camera = camera
     self.data = data
     self.scatter = scatter
     self.step = step
     self.samples = samples
+    self.callback = callback
 
   def render(self, image):
     width, height, depth = image.shape
@@ -38,3 +40,5 @@ class Scene(object):
           current += self.step
         
         image[i][j] = light[:image.ndim]
+        if self.callback:
+          self.callback(j * width + i, width * height)

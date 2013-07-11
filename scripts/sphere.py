@@ -6,11 +6,23 @@ import imageio
 
 class UnitSphere(object):
   def eval(self, x):
-    return min(0, max(1, 1 - x.length))
+    return max(0, min(1, 1 - x.length))
 
 class White(object):
   def eval(self, x):
     return Vec4(1)
+
+class Callback(object):
+  def __init__(self):
+    self.last = None
+
+  def update(self, current, total):
+    pct = int(100 * current / total)
+    if self.last is None:
+      self.last = pct-1
+    if pct > self.last:
+      print(pct, current, total)
+      self.last = pct
 
 def main():
   c = Camera(near=2, far=4)
@@ -24,6 +36,8 @@ def main():
   depth = 3
   #image = np.zeros((width, height, depth))
   image = imageio.imread('/home/pkilgo/Desktop/pyfx-sphere.png')
+  cb = Callback()
+  scene.callback = cb.update
   print(image.shape)
   scene.render(image)
   imageio.imsave('sphere.png', image)
