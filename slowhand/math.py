@@ -1,16 +1,25 @@
 import math
 
-def Vec3(*args):
-  if len(args) == 3:
+def VecN(*args, n=3):
+  if len(args) == n:
     return Vector(args)
   if len(args) == 1:
     try:
       len(args[0])
     except TypeError:
-      return Vector(args * 3) 
-    if len(args[0]) == 3:
+      return Vector(args * n) 
+    if len(args[0]) == n:
       return Vector(args[0])
   raise TypeError
+
+def Vec2(*args):
+  return VecN(*args, n=2)
+
+def Vec3(*args):
+  return VecN(*args, n=3)
+
+def Vec4(*args):
+  return VecN(*args, n=4)
 
 class Vector(object):
   def __init__(self, data):
@@ -111,6 +120,14 @@ class Vector(object):
       self * math.cos(theta) +
       axis * (self * axis) * (1 - math.cos(theta)) +
       (self ^ axis) * math.sin(theta))
+
+class Ray(object):
+  def __init__(self, base, direction):
+    self.base = base
+    self.direction = direction.unit
+
+  def trace(self, length):
+    return self.base + self.direction * length
 
 AXIS_X = Vector((1, 0, 0))
 AXIS_Y = Vector((0, 1, 0))

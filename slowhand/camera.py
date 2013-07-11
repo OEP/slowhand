@@ -1,5 +1,5 @@
 import math
-from .math import Vec3, AXIS_Z, AXIS_Y, AXIS_X
+from .math import Ray, Vec3, AXIS_Z, AXIS_Y, AXIS_X
 from .geom import Frustum
 
 class Camera(object):
@@ -35,6 +35,14 @@ class Camera(object):
     self._frustum.apex = Vec3(eye)
     normal = subject - eye
     self._frustum.set_normal_up(normal, up)
+
+  @property
+  def near(self):
+    return self._frustum.near
+
+  @property
+  def far(self):
+    return self._frustum.far
 
   @property
   def eye(self):
@@ -80,10 +88,14 @@ class Camera(object):
     self.aspect_ratio = ar
     self._update()
 
-  def get_view(self, x, y):
+  def get_ray_direction(self, x, y):
     x = (2 * x - 1.0) * self._tan_hfov
     y = (2 * y - 1.0) * self._tan_vfov
     return (y * self.up + x * self.right + self.view).unit
+
+  def get_ray(self, x, y):
+    direction = self.get_ray_direction(x, y)
+    return Ray(self.eye + direction * self.near, direction)
 
   def _update(self):
     self._tan_hfov = math.tan(self.hfov / 2)
