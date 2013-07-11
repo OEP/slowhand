@@ -26,7 +26,7 @@ class Vector(object):
     self.data = tuple(data)
 
   def __str__(self):
-    return str(self.data)
+    return "({})".format(", ".join("{:.3f}".format(x) for x in self.data))
 
   def __repr__(self):
     return "Vector<{}>".format(str(self))
@@ -125,6 +125,12 @@ class Ray(object):
   def __init__(self, base, direction):
     self.base = base
     self.direction = direction.unit
+
+  def __repr__(self):
+    return "Ray<{}>".format(str(self))
+
+  def __str__(self):
+    return "{{Base: {}, Direction: {}}}".format(self.base, self.direction)
 
   def trace(self, length):
     return self.base + self.direction * length
