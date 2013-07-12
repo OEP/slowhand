@@ -143,7 +143,8 @@ class Ray(object):
     try:
       return self._inverse_direction
     except AttributeError:
-      self._inverse_direction = Vector(1/x if x != 0 else 0
+      inf = float('inf')
+      self._inverse_direction = Vector(1/x if x != 0 else inf
         for x in self.direction)
       return self._inverse_direction
 

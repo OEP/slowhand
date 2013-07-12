@@ -1,5 +1,7 @@
 import math
+import sys
 from .math import Vector, Vec3, AXIS_X, AXIS_Y
+
 class Frustum(object):
   def __init__(self, apex, near, far, horizontal, vertical, normal, up):
     self.apex = apex
