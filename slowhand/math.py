@@ -43,6 +43,9 @@ class Vector(object):
         raise TypeError("Mismatched dimensions.")
       return all([x==y for x,y in zip(self, other)])
     return NotImplemented
+
+  def __neg__(self):
+    return Vector(-x for x in self)
   
   def __xor__(self, other):
     if isinstance(other, Vector):
