@@ -4,6 +4,7 @@ from slowhand.math import Vec3, Vec4
 from slowhand.geom import Box
 import numpy as np
 import imageio
+import math
 
 class UnitSphere(object):
   def eval(self, x):
@@ -30,6 +31,9 @@ class Callback(object):
 def main():
   c = Camera(near=2, far=4)
   c.look(0, 0, 4, 0, 0, 0, 0, 1, 0)
+  print(c.eye, c.view, c.up, c.right)
+  print(math.degrees(c.hfov), math.degrees(c.vfov))
+  print(c.aspect_ratio)
   data = RenderData(
     ed = UnitSphere(),
     ec = White())
@@ -39,7 +43,6 @@ def main():
   depth = 3
   image = np.zeros((width, height, depth), dtype=np.float32)
   cb = Callback()
-  scene.callback = cb.update
   scene.box = Box.from_radius(1)
   scene.render(image)
   imageio.imsave('sphere.exr', image)

@@ -1,5 +1,5 @@
 import math
-from multiprocessing import cpu_count
+from multiprocessing import cpu_count, Pool
 from collections import namedtuple
 from .math import Vec3, Vec4
 
@@ -25,14 +25,19 @@ class Scene(object):
 
   def render(self, image):
     height, width, depth = image.shape
-    for j in range(height):
-      for i in range(width):
-        light = self._do_render(i, j, width, height)
-        if light:
-          image[j][i] = light[:image.ndim]
+    def yield_args():
+      for j in range(height):
+        for i in range(width):
+          yield i, j, width, height
+    pool = Pool(self.threads)
+    result = pool.map(self._do_render, yield_args())
 
+    for i, j, light in result:
+      if light:
+        image[j][i] = light[:image.ndim]
 
-  def _do_render(self, i, j, width, height):
+  def _do_render(self, args):
+    i, j, width, height = args
     ray = self.camera.get_ray(i/width, j/height)
     t0 = self.camera.near
     t1 = self.camera.far
@@ -48,7 +53,7 @@ class Scene(object):
         t0 = max(t0, intersect[0])
         t1 = min(t1, intersect[1])
       else:
-        return None
+        return i, j, None
 
     current = t0
     while T > 1e-6 and current < t1:
@@ -58,4 +63,4 @@ class Scene(object):
       T *= deltaT
       current += self.step
     
-    return light
+    return i, j, light
