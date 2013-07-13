@@ -16,9 +16,8 @@ class Frustum(object):
 
   def set_normal_up(self, normal, up):
     self.normal = normal.unit
-    up = up.unit
-    self.right = self.normal.cross(up)
-    self.up = up.cross(self.right)
+    self.up = (up - up.dot(self.normal) * self.normal).unit
+    self.right = self.normal.cross(self.up).unit
 
 class Box(object):
   def __init__(self, llc, urc):
