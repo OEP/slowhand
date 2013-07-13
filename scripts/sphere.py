@@ -16,13 +16,15 @@ class White(object):
 class Callback(object):
   def __init__(self):
     self.last = None
+    self.count = 0
 
   def update(self, current, total):
-    pct = int(100 * current / total)
+    self.count += 1
+    pct = int(100 * self.count / total)
     if self.last is None:
       self.last = pct-1
     if pct > self.last:
-      print(pct, current, total)
+      print(pct, self.count, total)
       self.last = pct
 
 def main():
@@ -32,17 +34,15 @@ def main():
     ed = UnitSphere(),
     ec = White())
   scene = Scene(c, data)
-  width = 720
+  width = 200
   height = width / c.aspect_ratio
   depth = 3
-  #image = np.zeros((width, height, depth))
-  image = imageio.imread('/home/pkilgo/Desktop/better-bunny.png')
+  image = np.zeros((width, height, depth), dtype=np.float32)
   cb = Callback()
   scene.callback = cb.update
   scene.box = Box.from_radius(1)
-  print(image.shape)
   scene.render(image)
-  imageio.imsave('sphere.png', image)
+  imageio.imsave('sphere.exr', image)
 
 if __name__ == "__main__":
   main()
